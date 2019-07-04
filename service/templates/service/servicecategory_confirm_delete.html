@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}Are you sure you want to delete {{ servicecategory.ar_name }}?{% endblock %}
+
+{% block content %}
+<h6>Are you sure you want to delete <span class="highlighted">{{ servicecategory.ar_name }}</span> ?</h6>
+<form class="" action="{% url 'service:delete_service_category' pk=servicecategory.pk %}" method="post">
+  {% csrf_token %}
+  <button type="sumit" class="mt-2 btn btn-info btn-sm">Yes, I'm sure</button>
+</form>
+{% endblock %}

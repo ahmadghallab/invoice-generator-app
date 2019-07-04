@@ -1,0 +1,117 @@
+{% extends 'layout.html' %}
+{% block title %}Edit Bill{% endblock %}
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th class="no-border-top">Order</th>
+            <th class="no-border-top">Type</th>
+            <th class="no-border-top">Counter</th>
+            <th class="no-border-top">Customer</th>
+            <th class="no-border-top">Vehicle</th>
+            <th class="no-border-top">vin</th>
+            <th class="no-border-top">Engine</th>
+            <th class="no-border-top">Plate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ bill.order.pk }}</td>
+            <td>{{ bill.order.type }}</td>
+            <td>{{ bill.order.vehicle_counter }}</td>
+            <td>{{ bill.order.customer.ar_name }}</td>
+            <td>{{ bill.order.customer.vehicle.ar_name }}</td>
+            <td>{{ bill.order.customer.vin }}</td>
+            <td>{{ bill.order.customer.engine }}</td>
+            <td>{{ bill.order.customer.license_plate }}</td>
+        </tr>
+    </tbody>
+</table>
+<form class="mt-4" method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" class="form-control" value="{{ bill.date|date:"Y-m-d" }}">
+            </div>
+            <div class="form-group col-md-1">
+                <label for="type">Type</label>
+                <select name="type" id="type" class="form-control">
+                    <option value="{{ bill.type }}">{{ bill.type }}</option>
+                    {% if bill.type != 'labour' %}
+                    <option value="labour">labour</option>
+                    {% endif %}
+                    {% if bill.type != 'parts' %}
+                    <option value="parts">parts</option>
+                    {% endif %}
+                    {% if bill.type != 'oils' %}
+                    <option value="oils">oils</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="item_code">Material Code</label>
+                <input type="text" name="item_code" id="item_code" class="form-control" autocomplete="off" placeholder="Material Code"
+                    value="{{ bill.item_code }}">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="description">Description</label>
+                <input type="text" name="description" id="description" class="form-control" autocomplete="off"
+                    placeholder="Description" value="{{ bill.description }}">
+            </div>
+            <div class="form-group col-md-1">
+                <label for="quantity">Quantity</label>
+                <input type="text" name="qty" id="quantity" class="form-control" autocomplete="off" placeholder="Quantity"
+                    value="{{ bill.qty }}">
+            </div>
+            <div class="form-group col-md-1">
+                <label for="price">Price</label>
+                <input type="text" name="price" id="price" class="form-control" autocomplete="off" placeholder="Price"
+                    value="{{ bill.price }}">
+            </div>
+            <div class="form-group col-md-1">
+                <label for="discount">Discount</label>
+                <input type="text" name="discount" id="discount" class="form-control" autocomplete="off" placeholder="Discount"
+                    value="{{ bill.discount }}">
+            </div>
+            <div class="form-group col-auto">
+                <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="tax" {% if bill.tax %} checked {% endif %}>
+                    <label class="custom-control-label" for="customControlAutosizing">Apply 14% Tax</label>
+
+                </div>
+            </div>
+            <div class="form-group col-auto">
+                <div class="custom-control custom-checkbox mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="priceBeforeTax" name="priceBeforeTax">
+                    <label class="custom-control-label" for="priceBeforeTax">Price before Tax</label>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-info btn-sm">Save</button>
+</form>
+{% endblock %}
+{% block javascript %}
+
+<script>
+    $(document).ready(function() {
+        enterAsTab("#form", "#save");
+        $('#save').attr('disabled','disabled');
+        validate('#date,#type,#description,#price',"#save");
+        let priceBeforeTax
+        $("#price").keyup(function(){
+          priceBeforeTax = $(this).val();
+        });
+        $('#priceBeforeTax').click(function(){
+          if(this.checked && priceBeforeTax) {
+            newPrice = priceBeforeTax/1.14;
+          } else {
+            newPrice = parseFloat(priceBeforeTax);
+          }
+          $("#price").val(newPrice.toFixed(2));
+        });
+    });
+
+</script>
+{% endblock %}

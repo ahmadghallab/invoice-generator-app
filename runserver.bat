@@ -1,0 +1,1 @@
+CALL "C:\Users\Ghallab Motors\Desktop\sap_clone\Scripts\activate.bat" && cd "C:\Users\Ghallab Motors\Desktop\sap_clone\invoice_generator" && python manage.py runserver

@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block title %}Are you sure you want to delete {{ stock.name }}?{% endblock %}
+
+{% block content %}
+<h6>Are you sure you want to delete <span class="highlighted">{{ stock.name }}</span> ?</h6>
+<form class="" action="{% url 'service:item_delete' pk=stock.pk %}" method="post">
+  {% csrf_token %}
+  <button type="sumit" class="mt-2 btn btn-info btn-sm">Yes, I'm sure</button>
+</form>
+{% endblock %}

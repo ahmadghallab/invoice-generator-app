@@ -1,0 +1,236 @@
+{% extends 'layout.html' %}
+{% block title %}Edit Order{% endblock %}
+{% load static %}
+{% block content %}
+<table class="table screen_only">
+    <thead>
+        <tr>
+            <th class="no-border-top">Code</th>
+            <th class="no-border-top">Name</th>
+            <th class="no-border-top">Telephone</th>
+            <th class="no-border-top">Address</th>
+            <th class="no-border-top">Vehicle</th>
+            <th class="no-border-top">vin</th>
+            <th class="no-border-top">Engine</th>
+            <th class="no-border-top">Plate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ order.customer.pk }}</td>
+            <td>{{ order.customer.ar_name }}</td>
+            <td>{{ order.customer.telephone }}</td>
+            <td>{{ order.customer.address }}</td>
+            <td>{{ order.customer.vehicle.ar_name }}</td>
+            <td>{{ order.customer.vin }}</td>
+            <td>{{ order.customer.engine }}</td>
+            <td>{{ order.customer.license_plate }}</td>
+        </tr>
+    </tbody>
+</table>
+<form class="mt-4" method="post" id="form">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label for="enter_date">Enter Date</label>
+            <input type="date" name="enter_date" id="enter_date" class="form-control" value="{{ order.enter_date|date:'Y-m-d' }}"> 
+        </div> 
+        <div class="form-group col-md-1">
+            <label for="enter_time">Enter Time</label>
+            <input type="time" name="enter_time" id="enter_time" class="form-control" value="{{ order.enter_time|date:'H:i' }}"> 
+        </div> 
+        <div class="form-group col-md-2">
+            <label for="exit_date">Exit Date</label>
+            <input type="date" name="exit_date" id="exit_date" class="form-control" value="{{ order.exit_date|date:'Y-m-d' }}"> 
+        </div>
+        <div class="form-group col-md-1">
+            <label for="exit_time">Exit Time</label>
+            <input type="time" name="exit_time" id="exit_time" class="form-control" value="{{ order.exit_time|date:'H:i' }}"> 
+        </div>
+        <div class="form-group col-md-3">
+            <label for="type">Type</label>
+            <select name="type" id="type" class="form-control">
+                <option value="{{ order.type }}">{{ order.type }}</option>
+                {% if order.type != 'mc' %}
+                <option value="mc">mc</option>
+                {% endif %}
+                {% if order.type != 'bp' %}
+                <option value="bp">bp</option>
+                {% endif %}
+                {% if order.type != 'external' %}
+                <option value="external">external</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="vehicle_counter">Counter</label>
+            <input type="text" name="vehicle_counter" id="vehicle_counter" class="form-control" autocomplete="off"
+                placeholder="Vehicle Counter" value="{{ order.vehicle_counter }}">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="complaint">Complaint</label>
+            <textarea name="complaint" id="complaint" dir="rtl" class="form-control" placeholder="شكــــوي العميل">{{ order.complaint }}</textarea>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="complaint">Notes</label>
+            <textarea name="notes" id="notes" class="form-control" placeholder="This notes will be displayed in the invoice">{{ order.notes }}</textarea>
+        </div>
+        <div class="form-group col-auto">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="customer_call" {% if order.customer_call %} checked {% endif %}>
+                <label class="custom-control-label" for="customControlAutosizing">Would you like to recieve a phone call after 48 hours?</label>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-info btn-sm" id="save">Save</button>
+</form>
+<div class="mt-4 mt-0-print">
+    {% if order and order.type != 'external' %}
+    <div class="row mb-4 invoice-header" dir="rtl">
+        <div class="col-md-5 text-right">
+            <table class="text-right">
+                <tr>
+                    <td style="width:170px">الفرع</td>
+                    <td>: غلاب موتورز</td>
+                </tr>
+                <tr>
+                    <td>كود العميل</td>
+                    <td>: {{ order.customer.pk }}</td>
+                </tr>
+                <tr>
+                    <td>اسم العميل</td>
+                    <td>: {{ order.customer.ar_name }}</td>
+                </tr>
+                {% if order.customer.address %}
+                <tr>
+                    <td>العنوان</td>
+                    <td>: {{ order.customer.address }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.telephone %}
+                <tr>
+                    <td>التليفون</td>
+                    <td>: {{ order.customer.telephone }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.vehicle.ar_name %}
+                <tr>
+                    <td>نوع السيارة</td>
+                    <td>: {{ order.customer.vehicle.ar_name }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.vin %}
+                <tr>
+                    <td>رقم الشاسية</td>
+                    <td>: {{ order.customer.vin }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.engine %}
+                <tr>
+                    <td>رقم الموتور</td>
+                    <td>: {{ order.customer.engine }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.license_plate %}
+                <tr>
+                    <td>رقم السيارة</td>
+                    <td>: {{ order.customer.license_plate }}</td>
+                </tr>
+                {% endif %}
+                {% if order.vehicle_counter %}
+                <tr>
+                    <td>قراءة العداد</td>
+                    <td>: {{ order.vehicle_counter }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        <div class="col-md-2 text-center">
+            <img src="{% static 'img/mansour.png' %}" alt="Mansour Logo" width="110">
+        </div>
+        <div class="col-md-5">
+            <table class="text-right">
+                <tr>
+                    <td style="width:220px">رقم امر الاصلاح</td>
+                    <td>: {{ order.order_no }}</td>
+                </tr>
+                <tr>
+                    <td>نوع امر الاصلاح</td>
+                    <td>:
+                        {% if order.type == 'external' %}
+                        بيـع خــارجــي
+                        {% elif order.type == 'mc' %}
+                        صيــــانة
+                        {% else %}
+                        سمكــرة ودهــان
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>تاريخ دخول السيارة</td>
+                    <td>: {{ order.enter_date|date:"d.m.Y" }}</td>
+                </tr>
+                <tr>
+                    <td>وقت دخول السيارة</td>
+                    <td>: {{ order.enter_time }}</td>
+                </tr>
+                <tr>
+                    <td>تاريخ خروج السيارة</td>
+                    <td>: {{ order.exit_date|date:"d.m.Y" }}</td>
+                </tr>
+                <tr>
+                    <td>وقت خروج السيارة</td>
+                    <td>: {{ order.exit_time }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <table class="table text-right" dir="rtl">
+        <tr>
+            <th>رقم العملية</th>
+            <th>الاصلاح المطلوب</th>
+            <th>شكوي العميل</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>{{ order.complaint|linebreaksbr }}</td>
+        </tr>
+    </table>
+    <p class="text-right custom_font">تلفيات جسم السيارة الخارجي</p>
+    <div class="comments_box mb-3"></div>
+    <p class="text-right custom_font">تلفيات داخل السيارة</p>
+    <div class="comments_box mb-4"></div>
+    <div class="row custom_font pt-3">
+        <div class="col-md-5">
+            <span class="sign_box mr-2"></span> 
+            توقيع العميل
+        </div>
+        <div class="col-md-7 text-right">
+            مكالمة العميل بعد 48 ساعة
+            <span class="box">
+            {% if order.customer_call %}
+            نعم
+            {% else %}
+            لا
+            {% endif %}
+            </span>
+        </div>
+    </div>
+    
+    <button class="btn btn-warning btn-sm mt-4" id="print" onclick="doPrintReport()">Print Preview</button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    function doPrintReport() { window.print(); }
+    $(document).ready(function() {
+        enterAsTab("#form", "#save");
+        validate('#enter_date,#enter_time,#exit_date,#exit_time,#type',"#save");
+    });
+</script>
+
+{% endblock %} 

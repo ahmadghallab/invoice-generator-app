@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% block title %}Items{% endblock %}
+{% block content %}
+{% if items %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th class="no-border-top">#</th>
+      <th class="no-border-top">Name</th>
+      <th class="no-border-top">Code</th>
+      <th class="no-border-top">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td></td>
+      <td>
+        <div class="btn-group" role="group">
+          <a class="editable" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            {{ item.name }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'service:item_edit' pk=item.pk %}">Edit</a>
+            <a class="dropdown-item" href="{% url 'service:item_delete' pk=item.pk %}">Delete</a>
+          </div>
+        </div>
+      </td>
+      <td>{{ item.code }}</td>
+      <td>{{ item.price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="alert alert-info">No items to display</p>
+{% endif %}
+{% endblock %}

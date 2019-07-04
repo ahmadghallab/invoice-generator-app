@@ -1,0 +1,161 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  display: none;
+}
+.comments_box {
+  border: 1px solid #000;
+  padding: 50px;
+}
+.sign_box {
+  border: 1px solid #000;
+  padding: 8px 120px;
+}
+.box {
+  border: 1px solid #000;
+  padding: 8px;
+}
+label {
+  cursor: pointer;
+}
+.wrapper {
+  margin: 25px auto;
+}
+a {
+  color: #17a2b8;
+}
+a:hover, a:focus, a:active {
+  color: #0f7888;
+}
+.wrapper, .bootstrap-nav {
+  width: 85%;
+}
+table, input, textarea, select, .highlighted, .custom_font {
+  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+}
+.no-border-top {
+  border-top: 0 !important;
+}
+.navbar {
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.05), inset 0 -1px 0 rgba(0,0,0,.1);
+}
+.form-control {
+  box-shadow: none;
+  border:2px solid #e8ebed;
+  -webkit-appearance: none;
+  background-color: #e8ebed;
+  border-radius: 4px;
+}
+.form-control:focus {
+  box-shadow: none;
+  border:2px solid #8c9aa6;
+  background-color: #fff;
+  border-radius: 4px;
+}
+.editable, .editable:hover, .editable:focus, .highlighted  {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  background: #17a3b81a;
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #17a2b8;
+}
+label {
+  font-weight: 500;
+}
+.alert {
+  padding: 15px 20px;
+  color: rgba(255,255,255,1);
+  font-weight: 500;
+  overflow: hidden;
+  border: none;
+}
+.alert-info {
+  background-color: #83d2df;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 3px 6px 0px, #68c0ce 0px -2px 0px 0px inset;
+}
+.alert-success {
+  background-color: #28B62C;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 3px 6px 0px, #23a127 0px -2px 0px 0px inset;
+}
+.alert-danger {
+  background-color: #FF4136;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 3px 6px 0px, #E52318 0px -2px 0px 0px inset;
+}
+.border-bottom {
+  border-bottom: 1px solid #000 !important;
+}
+/* Autocomplete box */
+#autocompleteCard {
+  position: absolute;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  border-radius: 4px;
+  left: 0;
+  right: 0;
+  margin-top: 10px;
+  padding: 10px 0;
+  z-index: 1;
+}
+#autocompleteCard div {
+  padding:3px 15px;
+  margin: 0;
+  cursor: pointer;
+  position: relative;
+}
+#autocompleteCard div p {
+  margin-bottom: 0;
+}
+.selectedCust,
+#autocompleteCard div:hover {
+  background-color: rgb(68, 138, 255);
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+.itemName {
+  position: relative;
+  display: block;
+}
+.autocompleteQty { 
+  position: absolute;
+  right: 0;
+  margin-right: 15px;
+  top: 0;
+  margin-top: 2.5px;
+  background-color: #7DAEFF;
+  padding: 0 7px;
+  border-radius: 4px;
+  color: #fff;
+}
+@media only print {
+  body {
+    font-size: 16px !important;
+    font-weight: bold;
+    padding-top: 75px;
+  } 
+  form, .btn, .screen_only, .alert  {
+    display: none;
+  }
+  .editable {
+    text-decoration: none !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .wrapper {
+    width: 100%;
+  }
+  .mt-0-print {
+    margin-top: 0 !important;
+  }
+  .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    border: 1px solid #000000 !important;
+    vertical-align: middle;
+  }
+  .table>thead>tr>th {
+    border-bottom: 2px solid #000000 !important;
+  }
+  .table {
+    font-size: 16px;
+  }
+  
+}

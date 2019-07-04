@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+{% if orders %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th class="no-border-top">Date.</th>
+            <th class="no-border-top">Order</th>
+            <th class="no-border-top">Type</th>
+            <th class="no-border-top">Customer</th>
+            <th class="no-border-top">Vehicle</th>
+            <th class="no-border-top">Complaint</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.date }}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a class="editable" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        {{ order.pk }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'service:create_bill' order_pk=order.pk %}">Billing</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'service:edit_order' order_pk=order.pk %}">Edit</a>
+                        <a class="dropdown-item" href="{% url 'service:delete_order' order_pk=order.pk %}">Delete</a>
+                    </div>
+                </div>
+            </td>
+            <td>{{ order.type }}</td>
+            <td>{{ order.customer.ar_name }}</td>
+            <td>{{ order.customer.vehicle.ar_name }}</td>
+            <td>{{ order.complaint }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="alert alert-info">No orders to display</p>
+{% endif %}
+{% endblock %}

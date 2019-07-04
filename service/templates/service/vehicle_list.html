@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% block title %}Vehicles{% endblock %}
+{% block content %}
+  {% if vehicles %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="no-border-top">#</th>
+          <th class="no-border-top">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vehicle in vehicles %}
+          <tr>
+            <td></td>
+            <td>
+              <div class="btn-group" role="group">
+                <a class="editable" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ vehicle.ar_name }}
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="{% url 'service:edit_vehicle' pk=vehicle.pk %}">Edit</a>
+                  <a class="dropdown-item" href="{% url 'service:delete_vehicle' pk=vehicle.pk %}">Delete</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="alert alert-info">No vehicles to display</p>
+  {% endif %}
+{% endblock %}

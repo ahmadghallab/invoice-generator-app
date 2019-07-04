@@ -1,0 +1,434 @@
+{% extends 'layout.html' %}
+{% block title %}New Bill{% endblock %}
+{% load static %}
+{% block content %}
+<table class="table screen_only">
+    <thead>
+        <tr>
+            <th class="no-border-top">Order</th>
+            <th class="no-border-top">Type</th>
+            <th class="no-border-top">Counter</th>
+            <th class="no-border-top">Customer</th>
+            <th class="no-border-top">Vehicle</th>
+            <th class="no-border-top">vin</th>
+            <th class="no-border-top">Engine</th>
+            <th class="no-border-top">Plate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ order.pk }}</td>
+            <td>{{ order.type }}</td>
+            <td>{{ order.vehicle_counter }}</td>
+            <td>{{ order.customer.ar_name }}</td>
+            <td>{{ order.customer.vehicle.ar_name }}</td>
+            <td>{{ order.customer.vin }}</td>
+            <td>{{ order.customer.engine }}</td>
+            <td>{{ order.customer.license_plate }}</td>
+        </tr>
+    </tbody>
+</table>
+<form class="mt-4" id="form" method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" class="form-control" value="{% now 'Y-m-d' %}">
+        </div>
+        <div class="form-group col-md-1">
+            <label for="type">Type</label>
+            <select name="type" id="type" class="form-control">
+                <option value="">Select Type</option>
+                <option value="labour">labour</option>
+                <option value="parts">parts</option>
+                <option value="oils">oils</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="item_code">Material Code</label>
+            <input type="text" name="item_code" id="item_code" class="form-control" autocomplete="off" placeholder="Material Code">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="description">Description</label>
+            <input type="text" name="description" id="description" class="form-control" autocomplete="off" placeholder="Description">
+            <div id="autocompleteCard" class="animateThis"></div>
+            </span>
+            <input type="hidden" name="itemId" id="itemId" value="">
+        </div>
+        <div class="form-group col-md-1">
+            <label for="quantity">Quantity</label>
+            <input type="text" name="qty" id="quantity" class="form-control" autocomplete="off" placeholder="Quantity">
+        </div>
+        <div class="form-group col-md-1">
+            <label for="price">Price</label>
+            <input type="text" name="price" id="price" class="form-control" autocomplete="off" placeholder="Price">
+        </div>
+        <div class="form-group col-md-1">
+            <label for="discount">Discount</label>
+            <input type="text" name="discount" id="discount" class="form-control" autocomplete="off" placeholder="Discount">
+        </div>
+        <div class="form-group col-auto">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="tax">
+                <label class="custom-control-label" for="customControlAutosizing">Apply 14% Tax</label>
+            </div>
+        </div>
+        <div class="form-group col-auto">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="priceBeforeTax" name="priceBeforeTax">
+                <label class="custom-control-label" for="priceBeforeTax">Price before Tax</label>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-info btn-sm" id="save">Save</button>
+</form>
+<div class="mt-4 mt-0-print">
+    {% if types %}
+    <div class="row mb-4 invoice-header" dir="rtl">
+        <div class="col-md-5 text-right">
+            <table class="text-right">
+                <tr>
+                    <td style="width:170px">الفرع</td>
+                    <td>: غلاب موتورز</td>
+                </tr>
+                <tr>
+                    <td>كود العميل</td>
+                    <td>: {{ order.customer.pk }}</td>
+                </tr>
+                <tr>
+                    <td>اسم العميل</td>
+                    <td>: {{ order.customer.ar_name }}</td>
+                </tr>
+                {% if order.customer.address %}
+                <tr>
+                    <td>العنوان</td>
+                    <td>: {{ order.customer.address }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.telephone %}
+                <tr>
+                    <td>التليفون</td>
+                    <td>: {{ order.customer.telephone }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>نوع امر الاصلاح</td>
+                    <td>:
+                        {% if order.type == 'external' %}
+                        بيـع خــارجــي
+                        {% elif order.type == 'mc' %}
+                        صيــــانة
+                        {% else %}
+                        سمكــرة ودهــان
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if order.type != 'external' %}
+                <tr>
+                    <td>ت أمر الاصلاح</td>
+                    <td>: {{ order.enter_date|date:"d.m.Y" }}</td>
+                </tr>
+                <tr>
+                    <td>ت إنتهاء العمل</td>
+                    <td>: {{ order.exit_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+        <div class="col-md-2 text-center">
+            <img src="{% static 'img/mansour.png' %}" alt="Mansour Logo" width="100">
+        </div>
+        <div class="col-md-5">
+            <table class="text-right">
+                <tr>
+                    <td style="width:170px">رقم الفاتورة</td>
+                    <td>: {{ order.bill_no }}</td>
+                </tr>
+                <tr>
+                    <td>ت الفاتورة</td>
+                    <td>: {{ results.0.date|date:"d.m.Y" }}</td>
+                </tr>
+                {% if order.customer.vehicle.ar_name %}
+                <tr>
+                    <td>نوع السيارة</td>
+                    <td>: {{ order.customer.vehicle.ar_name }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.vin %}
+                <tr>
+                    <td>رقم الشاسية</td>
+                    <td>: {{ order.customer.vin }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.engine %}
+                <tr>
+                    <td>رقم الموتور</td>
+                    <td>: {{ order.customer.engine }}</td>
+                </tr>
+                {% endif %}
+                {% if order.customer.license_plate %}
+                <tr>
+                    <td>رقم السيارة</td>
+                    <td>: {{ order.customer.license_plate }}</td>
+                </tr>
+                {% endif %}
+                {% if order.vehicle_counter %}
+                <tr>
+                    <td>قراءة العداد</td>
+                    <td>: {{ order.vehicle_counter }}</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    <table class="table text-right" dir="rtl">
+        <tr>
+            <th class="text-center">الكــود</th>
+            <th class="text-center">الوصـــف</th>
+            <th class="text-center">العدد</th>
+            <th class="text-center">الاجمالي</th>
+        </tr>
+        {% for type in types %}
+        <tr>
+            <th colspan="4" class="font-weight-bold">
+                {% if type.type == 'labour' %}
+                العمليــــــات
+                {% elif type.type == 'parts' %}
+                قطــــع الغيــــار
+                {% elif type.type == 'oils' %}
+                زيــــوت وشحــــوم
+                {% endif %}
+            </th>
+        </tr>
+        {% for result in results %}
+        {% if result.type == type.type %}
+        <tr>
+            <td class="text-center">{{ result.item_code }}</td>
+            <td class="text-center">
+                <div class="btn-group" role="group">
+                    <a class="editable" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        {{ result.description }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'service:edit_bill' bill_pk=result.pk  order_pk=result.order.pk %}">Edit</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'service:delete_bill' bill_pk=result.pk  order_pk=result.order.pk %}">Delete</a>
+                    </div>
+                </div>
+            </td>
+            <td class="text-center">
+                {% if type.type == 'labour' %}
+                -
+                {% else %}
+                {{ result.qty }}
+                {% endif %}
+            </td>
+            <td class="text-center">
+                {{ result.net_price|floatformat:2 }}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        <tr>
+            <td colspan="3">الاجــــمــــالــــي</td>
+            <td class="text-center">
+                {{ type.sub_total|floatformat:2 }}
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3">الاجــــمــــالــــي العــــام</td>
+            <td class="text-center">{{ total.sub_general|floatformat:2 }}</td>
+        </tr>
+        {% if total.total_tax %}
+            <tr>
+                <td colspan="3">
+                    ضريبة القيمة المضافة 14%
+                </td>
+                <td class="text-center">{{ total.total_tax|floatformat:2 }}</td>
+            </tr>
+        {% endif %}
+        {% if labor_discount_value %}
+        <tr>
+            <td colspan="3">
+                خصم خاص علي المصنعيات
+                {{ total.avg_discount_labor|floatformat:2 }}
+                %
+            </td>
+            <td class="text-center">{{ labor_discount_value|floatformat:2 }}-</td>
+        </tr>
+        {% endif %}
+        {% if parts_discount_value %}
+        <tr>
+            <td colspan="3">
+                خصم خاص علي قطع الغيار
+                {{ total.avg_discount_parts|floatformat:2 }}
+                %
+            </td>
+            <td class="text-center">{{ parts_discount_value|floatformat:2 }}-</td>
+        </tr>
+        {% endif %}
+        {% if oils_discount_value %}
+        <tr>
+            <td colspan="3">
+                خصم خاص علي الزيوت
+                {{ total.avg_discount_oils|floatformat:2 }}
+                %
+            </td>
+            <td class="text-center">{{ oils_discount_value|floatformat:2 }}-</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td colspan="3">الصــــــافــــي</td>
+            <td class="text-center">{{ net_total|floatformat:2 }}</td>
+        </tr>
+    </table>
+    <div class="custom_font mt-3 pb-3 text-right font-weight-bold border-bottom">
+        {{ total_words }}
+    </div>
+    {% if order.notes %}
+    <div class="text-right custom_font border-bottom py-3">
+        <p class="font-weight-bold mb-2">ملاحظـــــات</p>
+        {{ order.notes|linebreaksbr }}
+    </div>
+    {% endif %}
+    {% if order.type == 'external' %}
+    <div class="text-right custom_font border-bottom py-3">أستلمت الاصناف الواردة بهذه الفاتورة بعد المعاينه والفحص<br />البضاعة
+        المباعة لا ترد ولا تستبدل
+    </div>
+    {% endif %}
+    <div class="custom_font text-right">
+        <p class="pt-3" style="font-size:18px;">
+            سجل تجاري: 43923
+            رقم التسجيل بضريبة المبيعات: 389-487-520
+            رقم الملف الضريبي: 05-01-191-04137-5
+        </p>
+    </div>
+    <button class="btn btn-warning btn-sm" id="print" onclick="doPrintReport()">Print Preview</button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    function doPrintReport() { window.print(); }
+    $(document).ready(function() {
+        enterAsTab("#form", "#save");
+        $('#save').attr('disabled','disabled');
+        validate('#date,#type,#description,#price',"#save");
+        let priceBeforeTax
+        $("#price").keyup(function(){
+          priceBeforeTax = $(this).val();
+        });
+        $('#priceBeforeTax').click(function(){
+          if(this.checked && priceBeforeTax) {
+            newPrice = priceBeforeTax/1.14;
+          } else {
+            newPrice = parseFloat(priceBeforeTax); 
+          }
+          $("#price").val(newPrice.toFixed(2));
+        });
+
+        let csrftoken = $("[name=csrfmiddlewaretoken]").val();;
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        function autocomplete(itemName, itemId, autocompleteCard) {
+            let fetchedData = false;
+            $(autocompleteCard).hide();
+            const $autocompleteCard = $(autocompleteCard);
+            $(itemName).on('keyup', function(e){
+                if($(this).val() == '') {
+                    $(itemId).val('');
+                    $(autocompleteCard + ' p.selectedCust').removeClass('selectedCust');
+                    $(autocompleteCard).hide();
+                } else {
+                    if(e.which != 40 && e.which != 38 && e.which != 13) {
+                        let itemNameVal = $(this).val();
+                        $.ajax({
+                            url: '{% url "service:get_items" %}',
+                            data: {itemName:itemNameVal},
+                            dataType: 'json',
+                            type: 'POST',
+                            beforeSend: function(xhr, settings) {
+                                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                                }
+                            },
+                            success: function(data) {
+                                if (data.length > 0) {
+                                    $(autocompleteCard).show();
+                                    fetchedData = true;
+                                    let $newItems = [];
+                                    for(let i = 0; i < data.length; i++) {
+                                        let $newItem = document.createElement('div');
+                                        $newItem.className = data[i].pk;
+
+                                        let $newItemBold = document.createElement('p');
+                                        $newItemBold.textContent = data[i]['fields'].name;
+                                        $newItem.appendChild($newItemBold);
+
+                                        let $newItemSpan = document.createElement('span');
+                                        $newItemSpan.className = 'autocompleteQty';
+                                        $newItemSpan.textContent = data[i]['fields'].price;
+                                        $newItem.appendChild($newItemSpan);
+
+                                        $newItems.push($newItem);
+                                    }
+
+                                    $autocompleteCard.html($newItems);
+                                    $(autocompleteCard + ' div:first-child').addClass('selectedCust');
+                                    $(autocompleteCard + ' div').on('click', function(event){
+                                        let $targetP = event.target.parentNode;
+                                        let $targetText = $targetP.firstElementChild;
+                                        $(itemName).val($targetText.textContent);
+                                        $(itemId).val(parseInt($targetP.className));
+                                        $(autocompleteCard).hide();
+                                    });
+                                } else {
+                                    $(autocompleteCard).hide();
+                                    fetchedData = false;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            $(itemName).on('keydown', function(e){
+                if($(this).val() != '' && fetchedData) {
+                    switch (e.which) {
+                        case 40:
+                            e.preventDefault(); // prevent moving the cursor
+                            $(autocompleteCard + ' div:not(:last-child).selectedCust').removeClass('selectedCust').next().addClass('selectedCust');
+                            break;
+                        case 38:
+                            e.preventDefault(); // prevent moving the cursor
+                            $(autocompleteCard + ' div:not(:first-child).selectedCust').removeClass('selectedCust').prev().addClass('selectedCust');
+                            break;
+                        case 13:
+                            e.preventDefault();
+                            let $selectedP = $(autocompleteCard + ' div.selectedCust');
+                            let $selectedSpan = $(autocompleteCard + ' div.selectedCust p');
+                            $(itemName).val($selectedSpan.text());
+                            $(itemId).val(parseInt($selectedP.attr("class")));
+                            $(autocompleteCard).hide();
+                            break;
+                    }
+                }
+            });
+        }
+
+        // Trigger Autocomplete func
+        let itemName = $("#description");
+        let itemId = $("#itemId");
+        let autocompleteCard = "#autocompleteCard";
+        autocomplete(itemName, itemId, autocompleteCard);
+    });
+
+</script>
+{% endblock %}

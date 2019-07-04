@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block title %}Are you sure you want to delete {{ bill.description }}?{% endblock %}
+
+{% block content %}
+<h6>Are you sure you want to delete <span class="highlighted">{{ bill.description }}</span> order number <span class="highlighted">
+        {{ bill.order.pk }}</span> ?</h6>
+<form class="" action="{% url 'service:delete_bill' order_pk=bill.order.pk bill_pk=bill.pk %}" method="post">
+    {% csrf_token %}
+    <button type="sumit" class="mt-2 btn btn-info btn-sm">Yes, I'm sure</button>
+</form>
+{% endblock %}

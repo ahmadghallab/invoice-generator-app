@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+{% if customers %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th class="no-border-top">#</th>
+      <th class="no-border-top">Name</th>
+      <th class="no-border-top">Address</th>
+      <th class="no-border-top">Telephone</th>
+      <th class="no-border-top">Vehicle</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customer in customers %}
+    <tr>
+      <td></td>
+      <td>
+        <div class="btn-group" role="group">
+          <a class="editable" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            {{ customer.ar_name }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'service:order_creation' customer_pk=customer.pk %}">New Order</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'service:edit_customer' pk=customer.pk %}">Edit</a>
+            <a class="dropdown-item" href="{% url 'service:delete_customer' pk=customer.pk %}">Delete</a>
+          </div>
+        </div>
+      </td>
+      <td>{{ customer.address }}</td>
+      <td>{{ customer.telephone }}</td>
+      <td>{{ customer.vehicle.ar_name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="alert alert-info">No customers to display</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+{% block title %}New Order{% endblock %}
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th class="no-border-top">Code</th>
+            <th class="no-border-top">Name</th>
+            <th class="no-border-top">Telephone</th>
+            <th class="no-border-top">Address</th>
+            <th class="no-border-top">Vehicle</th>
+            <th class="no-border-top">vin</th>
+            <th class="no-border-top">Engine</th>
+            <th class="no-border-top">Plate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ customer.pk }}</td>
+            <td>{{ customer.ar_name }}</td>
+            <td>{{ customer.telephone }}</td>
+            <td>{{ customer.address }}</td>
+            <td>{{ customer.vehicle.ar_name }}</td>
+            <td>{{ customer.vin }}</td>
+            <td>{{ customer.engine }}</td>
+            <td>{{ customer.license_plate }}</td>
+        </tr>
+    </tbody>
+</table>
+<form class="mt-4" id="form" method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label for="enter_date">Enter Date</label>
+            <input type="date" name="enter_date" id="enter_date" class="form-control" value="{{ currentDate|date:'Y-m-d' }}"> 
+        </div> 
+        <div class="form-group col-md-1">
+            <label for="enter_time">Enter Time</label>
+            <input type="time" name="enter_time" id="enter_time" class="form-control" value="{{ currentDate|date:'H:i' }}"> 
+        </div> 
+        <div class="form-group col-md-2">
+            <label for="exit_date">Exit Date</label>
+            <input type="date" name="exit_date" id="exit_date" class="form-control" value="{{ currentDate|date:'Y-m-d' }}"> 
+        </div>
+        <div class="form-group col-md-1">
+            <label for="exit_time">Exit Time</label>
+            <input type="time" name="exit_time" id="exit_time" class="form-control" value="{{ currentDate|date:'H'|add:2 }}:{{ currentDate|date:'i' }}"> 
+        </div>
+        <div class="form-group col-md-3">
+            <label for="type">Type</label>
+            <select name="type" id="type" class="form-control">
+                <option value="">Select Type</option>
+                <option value="mc">mc</option>
+                <option value="bp">bp</option>
+                <option value="external">external</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="vehicle_counter">Counter</label>
+            <input type="number" name="vehicle_counter" id="vehicle_counter" class="form-control" autocomplete="off"
+                placeholder="Vehicle Counter">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="complaint">Complaint</label>
+            <textarea name="complaint" id="complaint" class="form-control" dir="rtl" placeholder="شكــــوي العميل"></textarea>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="complaint">Notes</label>
+            <textarea name="notes" id="notes" class="form-control" placeholder="This notes will be displayed in the invoice"></textarea>
+        </div>
+        <div class="form-group col-auto">
+            <div class="custom-control custom-checkbox mr-sm-2">
+                <input type="checkbox" class="custom-control-input" id="customControlAutosizing" name="customer_call">
+                <label class="custom-control-label" for="customControlAutosizing">Would you like to recieve a phone call after 48 hours?</label>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-info btn-sm" id="save">Save</button>
+</form>
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    $(document).ready(function() {
+        enterAsTab("#form", "#save");
+        $('#save').attr('disabled','disabled');
+        validate('#enter_date,#enter_time,#exit_date,#exit_time,#type',"#save");
+    });
+</script>
+
+{% endblock %} 
